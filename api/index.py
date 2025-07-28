@@ -1,7 +1,84 @@
-from flask import Flask
+from flask import Flask, request, jsonify
+from openai import OpenAI
+import os
+from dotenv import load_dotenv
 
+# Load environment variables from a .env file
+load_dotenv()
+vector_store_details = {
+    "id": os.getenv("VECTORDBID"),
+}
+# Initialize the Flask application
 app = Flask(__name__)
+api = os.getenv("OPENAI")
+# Initialize the OpenAI client
+# It's more efficient to initialize this once, outside of the request handler.
+client = OpenAI(api_key=api)
 
-@app.route('/')
-def home():
-    return 'Hello, World!'
+# Define the main endpoint for processing user queries
+@app.route('/', methods=['POST'])
+def get_response():
+    """
+    Accepts a user query via a POST request and returns a response
+    from the OpenAI assistant.
+    """
+    if api is None or len(api) == 0:
+        return jsonify({"error": "OPENAI_API_KEY environment variable not set."}), 500
+
+
+    # Get the JSON data from the request body
+    data = request.get_json()
+    if not data or 'query' not in data:
+        return jsonify({"error": "Request body must be JSON and contain a 'query' key."}), 400
+
+    query = data['query']
+    vector_store_id = os.getenv("VECTORDBID")
+
+    if not vector_store_id:
+        return jsonify({"error": "VECTORDBID environment variable not set."}), 500
+
+    instructions = """
+    You are an expert SCU academic advisor. Your role is to provide direct, accurate, and complete answers using only the provided university documents.
+    Before answering, break down the user's question, search all provided documents for every piece of relevant information, and then synthesize a single, direct answer.
+    Answering Rules:
+    - For Course Questions with Multiple Requirements (e.g., "Arts AND Ethics"): Your primary task is to find the intersection. First, identify all courses that meet each separate requirement. Then, provide a single, final list containing only the courses that satisfy all conditions. Group this list by department with full course numbers and titles.
+    - For Policy Questions (e.g., "Can I double dip?"): Identify the specific policy and summarize the relevant rules, conditions, or exceptions. If the user mentions their status (e.g., "as a transfer student"), apply the rules specifically to their situation.
+    - Final Answer: Always be direct and complete. Do not suggest reading a source document; extract the information and present it clearly. If no information is found or no courses meet the criteria, state that explicitly.
+    """
+
+    try:
+        response = client.responses.create(
+            model="gpt-4o-mini",
+            input=query,
+            temperature=0.0,
+            tools=[{
+                "type": "file_search",
+                "vector_store_ids": [vector_store_id],
+                "max_num_results": 40,
+            }],
+            include=["file_search_call.results"]
+        )
+        
+        # Extract the message text from the response
+        message_text = next((item.content[0].text for item in response.output if item.type == 'message'), None)
+
+        if message_text:
+            return jsonify({"response": message_text})
+        else:
+            return jsonify({"error": "No message with text content found in the response output."}), 500
+
+    except Exception as e:
+        # Handle potential API errors
+        return jsonify({"error": str(e)}), 500
+
+# Define a health check endpoint
+@app.route('/check')
+def check():
+    """
+    A simple endpoint to confirm that the Flask application is running.
+    """
+    return jsonify({"status": "ok", "message": "API is running."})
+
+# Note: For local development, you might add the following lines.
+if __name__ == '__main__':
+    app.run(host='0.0.0.0', port=5000, debug=True)
