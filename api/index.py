@@ -19,7 +19,7 @@ client = OpenAI()
 enableGuardrails = True
 
 def checkInput(input):
-    objective = "Santa Clara University (SCU), Provost, Education advising, courses, academic policies, or student advising and support"
+    objective = "Santa Clara University (SCU), Provost, Education advising, courses, academic policies, student advising and support or a related question"
     response = client.chat.completions.create(
         model="gpt-3.5-turbo",
         messages=[
@@ -104,7 +104,7 @@ def check():
 
 
 # Note: For local development, you might add the following lines.
-# if __name__ == '__main__':
-#     app.run(host='0.0.0.0', port=5000, debug=True)
+if __name__ == '__main__':
+    app.run(host='0.0.0.0', port=5000, debug=True)
 
 
