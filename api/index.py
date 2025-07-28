@@ -2,7 +2,7 @@ from flask import Flask, request, jsonify
 from openai import OpenAI
 import os
 from dotenv import load_dotenv
-
+#Ahh test test pls update on vercel
 # Load environment variables from a .env file
 load_dotenv()
 vector_store_details = {
@@ -82,3 +82,5 @@ def check():
 # Note: For local development, you might add the following lines.
 # if __name__ == '__main__':
 #     app.run(host='0.0.0.0', port=5000, debug=True)
+
+
