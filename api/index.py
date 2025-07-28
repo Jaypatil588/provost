@@ -91,7 +91,7 @@ def get_response():
     if (enableGuardrails == True and isValid == 1) or enableGuardrails == False:
         return generateResponse(query,vector_store_id)
     else:
-        return("Sorry, i cannot help you with that!")
+        return jsonify({"response": "Sorry, i cannot help you with that!"})
 
 # Define a health check endpoint, default
 @app.route('/')
