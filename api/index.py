@@ -2,18 +2,16 @@ from flask import Flask, request, jsonify
 from openai import OpenAI
 import os
 from dotenv import load_dotenv
-#Ahh test test pls update on vercel
+
 # Load environment variables from a .env file
 load_dotenv()
 vector_store_details = {
     "id": os.getenv("VECTORDBID"),
 }
-# Initialize the Flask application
 app = Flask(__name__)
-api = os.getenv("OPENAI")
-# Initialize the OpenAI client
-# It's more efficient to initialize this once, outside of the request handler.
-client = OpenAI(api_key=api)
+# api = os.getenv("OPENAI")
+
+client = OpenAI()
 
 # Define the main endpoint for processing user queries
 @app.route('/', methods=['POST'])
@@ -22,9 +20,6 @@ def get_response():
     Accepts a user query via a POST request and returns a response
     from the OpenAI assistant.
     """
-    if api is None or len(api) == 0:
-        return jsonify({"error": "OPENAI_API_KEY environment variable not set."}), 500
-
 
     # Get the JSON data from the request body
     data = request.get_json()
