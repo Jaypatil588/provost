@@ -103,7 +103,7 @@ def check():
 
 
 # Note: For local development, you might add the following lines.
-if __name__ == '__main__':
-    app.run(host='0.0.0.0', port=5000, debug=True)
+# if __name__ == '__main__':
+#     app.run(host='0.0.0.0', port=5000, debug=True)
 
 
