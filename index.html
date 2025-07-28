@@ -168,6 +168,7 @@
     </div>
 </div>
 
+<script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
 <script>
     // Using a self-executing function to avoid conflicts with other scripts on your site.
     (function() {
@@ -193,8 +194,9 @@
                 if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
                 
                 const data = await response.json();
+                console.log(data)
                 removeTypingIndicator();
-                appendMessage('assistant', data.answer);
+                appendMessage('assistant', data.response);
 
             } catch (error) {
                 console.error('Error fetching response:', error);
@@ -213,8 +215,7 @@
 
             const messageContent = document.createElement('div');
             messageContent.className = 'message-content';
-            messageContent.textContent = text;
-            
+            messageContent.innerHTML = marked.parse(text);             
             messageDiv.appendChild(avatar);
             messageDiv.appendChild(messageContent);
             chatWindow.appendChild(messageDiv);
