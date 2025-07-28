@@ -60,7 +60,7 @@ def get_response():
         )
         
         # Extract the message text from the response
-        message_text = next((item.content[0].text for item in response.output if item.type == 'message'), None)
+        message_text = next((item.content[0].text for item in response.output if item.type == 'message'), None) # type: ignore
 
         if message_text:
             return jsonify({"response": message_text})
