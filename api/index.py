@@ -14,7 +14,7 @@ app = Flask(__name__)
 client = OpenAI()
 
 # Define the main endpoint for processing user queries
-@app.route('/', methods=['POST'])
+@app.route('/bot', methods=['POST'])
 def get_response():
     """
     Accepts a user query via a POST request and returns a response
@@ -66,13 +66,13 @@ def get_response():
         # Handle potential API errors
         return jsonify({"error": str(e)}), 500
 
-# Define a health check endpoint
-@app.route('/check')
+# Define a health check endpoint, default
+@app.route('/')
 def check():
     """
     A simple endpoint to confirm that the Flask application is running.
     """
-    return jsonify({"status": "ok", "message": "API is running."})
+    return jsonify({"status": "ok", "message": "Provost Bot API is running."})
 
 # Note: For local development, you might add the following lines.
 # if __name__ == '__main__':
