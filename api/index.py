@@ -1,4 +1,4 @@
-from flask import Flask, request, jsonify
+from flask import Flask, request, jsonify, Response, stream_with_context # <--- CHANGE: Imported Response and stream_with_context
 from openai import OpenAI
 import os
 from dotenv import load_dotenv
@@ -57,19 +57,30 @@ def generateResponse(query,vector_store_id):
             }],
             include=["file_search_call.results"],
             instructions=instructions,
+            stream=True,
+
         )
         
-        # Extract the message text from the response
-        message_text = next((item.content[0].text for item in response.output if item.type == 'message'), None) # type: ignore
-
-        if message_text:
-            return jsonify({"response": message_text})
-        else:
-            return jsonify({"response": "Error in generating response."}), 500
-
+        # <--- CHANGE: Instead of returning a full string, we yield each piece --- >
+        for event in response:
+            if event.type == "response.output_text.delta":
+                yield event.delta
+ 
     except Exception as e:
-        # Handle potential API errors
-        return jsonify({"error": str(e)}), 500
+        # Handle potential API errors by yielding an error message
+        yield f"Error: {str(e)}"
+
+    #     # Extract the message text from the response
+    #     message_text = next((item.content[0].text for item in response.output if item.type == 'message'), None) # type: ignore
+
+    #     if message_text:
+    #         return jsonify({"response": message_text})
+    #     else:
+    #         return jsonify({"response": "Error in generating response."}), 500
+
+    # except Exception as e:
+    #     # Handle potential API errors
+    #     return jsonify({"error": str(e)}), 500
 
 # Define the main endpoint for processing user queries
 @app.route('/bot', methods=['POST'])
@@ -89,7 +100,7 @@ def get_response():
         return jsonify({"error": "VECTORDBID environment variable not set."}), 500
 
     if (enableGuardrails == True and isValid == 1) or enableGuardrails == False:
-        return generateResponse(query,vector_store_id)
+        return Response(stream_with_context(generateResponse(query,vector_store_id)), mimetype='text/plain')
     else:
         return jsonify({"response": "Sorry, i cannot help you with that!"})
 
@@ -103,7 +114,7 @@ def check():
 
 
 # Note: For local development, you might add the following lines.
-# if __name__ == '__main__':
-#     app.run(host='0.0.0.0', port=5000, debug=True)
+if __name__ == '__main__':
+    app.run(host='0.0.0.0', port=5000, debug=True)
 
 
