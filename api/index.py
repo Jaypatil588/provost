@@ -80,5 +80,5 @@ def check():
     return jsonify({"status": "ok", "message": "API is running."})
 
 # Note: For local development, you might add the following lines.
-if __name__ == '__main__':
-    app.run(host='0.0.0.0', port=5000, debug=True)
+# if __name__ == '__main__':
+#     app.run(host='0.0.0.0', port=5000, debug=True)
