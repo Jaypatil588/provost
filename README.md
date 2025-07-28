@@ -1,28 +1,78 @@
-[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https%3A%2F%2Fgithub.com%2Fvercel%2Fexamples%2Ftree%2Fmain%2Fpython%2Fflask3&demo-title=Flask%203%20%2B%20Vercel&demo-description=Use%20Flask%203%20on%20Vercel%20with%20Serverless%20Functions%20using%20the%20Python%20Runtime.&demo-url=https%3A%2F%2Fflask3-python-template.vercel.app%2F&demo-image=https://assets.vercel.com/image/upload/v1669994156/random/flask.png)
+# SCU Provost Academic Advisor Chatbot
 
-# Flask + Vercel
+An intelligent chatbot designed to assist students with questions related to the Santa Clara University (SCU) Provost's office, academic policies, and course information. This project leverages OpenAI's GPT-4o with a Retrieval-Augmented Generation (RAG) architecture to provide accurate answers based on a dedicated knowledge base.
 
-This example shows how to use Flask 3 on Vercel with Serverless Functions using the [Python Runtime](https://vercel.com/docs/concepts/functions/serverless-functions/runtimes/python).
+## ✨ Key Features
 
-## Demo
+* **AI-Powered Responses:** Utilizes the OpenAI GPT-4o model for natural and context-aware conversations.
+* **Retrieval-Augmented Generation (RAG):** Answers are grounded in a specific set of university documents, ensuring accuracy and relevance through an OpenAI vector store.
+* **Relevancy Guardrails:** A preliminary check classifies user queries to ensure the chatbot only answers questions related to its purpose.
+* **Scalable API Backend:** Built with Flask, making it lightweight and ready for serverless deployment on platforms like Vercel.
 
-https://flask-python-template.vercel.app/
+## 🛠️ Tech Stack
 
-## How it Works
+* **Backend:** Python, Flask
+* **AI & NLP:** OpenAI API (GPT-4o, GPT-3.5-Turbo for guardrails)
+* **Data Store:** OpenAI Vector Store
+* **Environment Management:** `python-dotenv`
 
-This example uses the Web Server Gateway Interface (WSGI) with Flask to enable handling requests on Vercel with Serverless Functions.
+## 🚀 Getting Started
 
-## Running Locally
+### Prerequisites
 
-```bash
-npm i -g vercel
-vercel dev
+* Python 3.8+
+* An OpenAI API Key
+
+### 1. Clone the Repository
+
+```
+git clone <your-repository-url>
+cd <your-project-directory>
 ```
 
-Your Flask application is now available at `http://localhost:3000`.
+### 2. Install Dependencies
 
-## One-Click Deploy
+```
+pip install -r requirements.txt
+```
 
-Deploy the example using [Vercel](https://vercel.com?utm_source=github&utm_medium=readme&utm_campaign=vercel-examples):
+### 3. Set Up Environment Variables
 
-[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https%3A%2F%2Fgithub.com%2Fvercel%2Fexamples%2Ftree%2Fmain%2Fpython%2Fflask3&demo-title=Flask%203%20%2B%20Vercel&demo-description=Use%20Flask%203%20on%20Vercel%20with%20Serverless%20Functions%20using%20the%20Python%20Runtime.&demo-url=https%3A%2F%2Fflask3-python-template.vercel.app%2F&demo-image=https://assets.vercel.com/image/upload/v1669994156/random/flask.png)
+Create a `.env` file in the root directory and add your credentials:
+
+```
+# Your OpenAI API Key
+OPENAI_API_KEY="sk-..."
+
+# The ID of your OpenAI Vector Store
+VECTORDBID="vs_..."
+```
+
+### 4. Run the Application Locally
+
+```
+python api/index.py
+```
+
+The server will start, typically on `http://127.0.0.1:5000`.
+
+## 📡 API Endpoints
+
+### Main Endpoint
+
+* **`POST /`**: Accepts a user query and returns a synthesized answer.
+    * **Request Body:** `{ "query": "Your question here..." }`
+    * **Success Response:** `{"response": "The assistant's answer..."}`
+
+### Health Check
+
+* **`GET /check`**: A simple endpoint to confirm the API is running.
+    * **Success Response:** `{"status": "ok", "message": "API is running."}`
+
+## ⚙️ How It Works
+
+1.  A frontend client sends a `POST` request with a JSON payload to the Flask server.
+2.  The server first sends the query to a **Guardrail Model** (GPT-3.5-Turbo) to classify its relevance.
+3.  If the query is relevant, the server calls the main **Generation Model** (GPT-4o).
+4.  The model uses the `file_search` tool to query the pre-configured OpenAI Vector Store for relevant context.
+5.  The model generates a complete response, which the server returns to the client.
