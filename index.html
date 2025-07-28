@@ -23,8 +23,8 @@
     .provost-chat-container .logo {
         background-color: white;
         color: #862633;
-        width: 40px;
-        height: 40px;
+        width: 60px;
+        height: 60px;
         border-radius: 50%;
         display: flex;
         justify-content: center;
@@ -35,20 +35,20 @@
     }
     .provost-chat-container .header-title h2 {
         margin: 0;
-        font-size: 18px;
+        font-size: clamp(1rem, 0.8rem + 0.5vw, 1.125rem); /* Responsive Header (16px-18px) */
     }
     .provost-chat-container .header-title p {
         margin: 0;
         font-size: 12px;
         opacity: 0.9;
     }
-    .provost-chat-container .close-btn {
+    /* .provost-chat-container .close-btn {
         position: absolute;
         top: 10px;
         right: 20px;
         font-size: 24px;
         cursor: pointer;
-    }
+    } */
     .provost-chat-container .chat-window {
         flex-grow: 1;
         padding: 20px;
@@ -75,17 +75,34 @@
         flex-shrink: 0;
     }
     .provost-chat-container .message .message-content {
-        padding: 12px;
         border-radius: 18px;
         line-height: 1.4;
+        font-size: clamp(0.875rem, 0.75rem + 0.5vw, 0.9375rem);
+        padding-left: 10px;
+        padding-right: 10px;
+        padding-top: 10px;
+
     }
     .provost-chat-container .message.assistant {
         align-self: flex-start;
     }
+    .provost-chat-container .message.assistant .message-content .first-line {
+        background-color: #f1f1f1;
+        color: #333;
+        padding-left: 10px;
+        padding-right: 10px;
+        padding-bottom: 10px;
+    }
+
     .provost-chat-container .message.assistant .message-content {
         background-color: #f1f1f1;
         color: #333;
+        font-size: clamp(0.875rem, 0.75rem + 0.5vw, 0.9375rem);
+        padding-left: 10px;
+        padding-right: 10px;
+        padding-top: 10px;
     }
+
     .provost-chat-container .message.user {
         align-self: flex-end;
         flex-direction: row-reverse;
@@ -110,7 +127,7 @@
         border: 1px solid #ccc;
         border-radius: 20px;
         padding: 10px 15px;
-        font-size: 14px;
+        font-size: clamp(0.875rem, 0.75rem + 0.5vw, 0.9375rem); /* Responsive Input (14px-15px) */
         outline: none;
     }
     .provost-chat-container #provost-user-input:focus {
@@ -148,20 +165,22 @@
 
 <div class="provost-chat-container">
     <div class="chat-header">
-        <div class="logo">C</div>
+        <div class="logo"><img src="https://santaclarauniversity.github.io/assets/images/scu_ver1_pos_rgb_2c.png" alt="SCU Logo" width="55" height="38"></div>
         <div class="header-title">
-            <h2>SCU Provost Chatbot</h2>
+            <h2>SCU Provost Assistant</h2>
         </div>
-        <div class="close-btn">&times;</div>
+        <!-- <div class="close-btn">Close</div> -->
     </div>
     <div class="chat-window" id="provost-chat-window">
         <div class="message assistant">
-            <div class="avatar">A</div>
-            <div class="message-content">How can I help you today?</div>
+            <div class="avatar">P</div>
+            <div class="message-content">
+                <div class="first-line">How can I help you today?</div>
+            </div>
         </div>
     </div>
     <div class="chat-input-area">
-        <input type="text" id="provost-user-input" placeholder="Reply...">
+        <input type="text" id="provost-user-input" placeholder="Ask me anything...">
         <button id="provost-send-btn">
             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" width="24" height="24"><path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"></path></svg>
         </button>
@@ -211,7 +230,7 @@
 
             const avatar = document.createElement('div');
             avatar.className = 'avatar';
-            avatar.textContent = sender === 'user' ? 'U' : 'A';
+            avatar.textContent = sender === 'user' ? 'U' : 'P';
 
             const messageContent = document.createElement('div');
             messageContent.className = 'message-content';
@@ -228,11 +247,11 @@
             
             const avatar = document.createElement('div');
             avatar.className = 'avatar';
-            avatar.textContent = 'A';
+            avatar.textContent = 'P';
             
             const messageContent = document.createElement('div');
             messageContent.className = 'message-content';
-            messageContent.innerHTML = '<span>.</span><span>.</span><span>.</span>';
+            messageContent.innerHTML = '<span>Thinking.</span><span>.</span><span>.</span>';
             
             typingDiv.appendChild(avatar);
             typingDiv.appendChild(messageContent);
