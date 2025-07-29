@@ -54,7 +54,7 @@ def generateResponse(query,vector_store_id):
             tools=[{
                 "type": "file_search",
                 "vector_store_ids": [vector_store_id],
-                "max_num_results": 30,
+                "max_num_results": 10,
             }],
             include=["file_search_call.results"],
             instructions=instructions,
