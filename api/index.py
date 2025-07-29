@@ -44,6 +44,7 @@ def generateResponse(query,vector_store_id):
     - For Policy Questions (e.g., "Can I double dip?"): Identify the specific policy and summarize the relevant rules, conditions, or exceptions. If the user mentions their status (e.g., "as a transfer student"), apply the rules specifically to their situation.
     - Final Answer: Always be direct and complete. Do not suggest reading a source document; extract the information and present it clearly. If no information is found or no courses meet the criteria, state that explicitly.
     - Do not use bold font style. Do not change the text size. Keep it plain text. Maintain strict formatting.
+    - For the core requirements ensure that you do a  comprehensive, iterative lookup and rule-application process ensures all relevant Core fulfillments are identified and contextualized.
     """
 
     try:
