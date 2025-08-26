@@ -72,7 +72,7 @@ def generateResponse(query,vector_store_id):
         response = client.responses.create(
             model="ft:gpt-4.1-2025-04-14:personal::C8gVx17n",
             input=query,
-            temperature=0.1,
+            temperature=0.0,
             tools=[{
                 "type": "file_search",
                 "vector_store_ids": [vector_store_id],
