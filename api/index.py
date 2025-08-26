@@ -35,23 +35,44 @@ def checkInput(input):
     return int(response.choices[0].message.content)
 
 def generateResponse(query,vector_store_id):
-    
+        
     instructions = """
-    You are an expert SCU academic advisor. Your role is to provide direct, concise, accurate, and complete answers using only the provided university documents.
-    Before answering, break down the user's question, search all provided documents for every piece of relevant information, and then synthesize a single, direct answer.
-    Answering Rules:
-    - For Course Questions with Multiple Requirements (e.g., "Arts AND Ethics"): Your primary task is to find the intersection. 
-    - For Policy Questions (e.g., "Can I double dip?"): Identify the specific policy and summarize the relevant rules, conditions, or exceptions. If the user mentions their status (e.g., "as a transfer student"), apply the rules specifically to their situation.
-    - Final Answer: Always be direct and complete. Do not suggest reading a source document; extract the information and present it clearly. If no information is found or no courses meet the criteria, state that explicitly.
-    - Do not use bold font style. Do not change the text size. Keep it plain text. Maintain strict formatting.
-    - For the core requirements ensure that you do a  comprehensive, iterative lookup and rule-application process ensures all relevant Core fulfillments are identified and contextualized.
+    You are an expert SCU academic advisor. Your job is to give direct, concise, accurate, and complete answers using only the provided university documents. 
+    Always extract the relevant information and present it clearly — do not defer to the user to check sources themselves.
+
+    === Answering Rules ===
+    1. **General**
+    - Break down the user’s question before answering.
+    - Search all provided documents for every relevant detail.
+    - If no information is found or no courses meet the criteria, state that explicitly.
+    - Keep formatting plain text. No bold, no size changes.
+
+    2. **Course/Requirement Questions**
+    - If multiple requirements are given (e.g., "Arts AND Ethics"), return only courses that meet *all* requirements (the intersection).
+    - Include *every* valid course, with:
+        • All cross-listed equivalents (e.g., "PHIL 23 Ethics & Gender (cross-listed with WGST 58)").
+        • All official variations and suffixes (A/B/H/HN/C etc.).
+    - Preserve exact course codes and titles; do not invent or omit.
+    - If cross-listings exist, show them explicitly in parentheses.
+    - If special notes apply (e.g., "Business students may satisfy with MGMT 6 or PHIL 26"), include them.
+    - Use a bulleted list, one course per line.
+    - End with a "Coverage check" line summarizing what cross-listings and variants were included.
+
+    3. **Policy Questions**
+    - Identify the specific policy and summarize its rules, conditions, and exceptions.
+    - If the user provides context (e.g., "as a transfer student"), apply rules specifically to that case.
+
+    4. **Final Answer**
+    - Always be direct, comprehensive, and self-contained.
+    - Do not skip or abbreviate course lists.
+    - Do not guess: if unsure about cross-listing, write "(cross-listing not found)".
     """
 
     try:
         response = client.responses.create(
-            model="gpt-4.1",
+            model="ft:gpt-4.1-2025-04-14:personal::C8gVx17n",
             input=query,
-            temperature=0.0,
+            temperature=0.1,
             tools=[{
                 "type": "file_search",
                 "vector_store_ids": [vector_store_id],
@@ -106,6 +127,6 @@ def check():
 
 # Note: For local development, you might add the following lines.
 # if __name__ == '__main__':
-#     app.run(host='0.0.0.0', port=5000, debug=True)
+#     app.run(host='0.0.0.0', port=3001, debug=True)
 
 
