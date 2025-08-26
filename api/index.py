@@ -49,7 +49,7 @@ def generateResponse(query,vector_store_id):
 
     try:
         response = client.responses.create(
-            model="gpt-4o-mini",
+            model="gpt-4.1",
             input=query,
             temperature=0.0,
             tools=[{
